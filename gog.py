@@ -102,35 +102,27 @@ def send_discord(giveaway):
 
     game_url = f"https://www.gog.com/game/{giveaway['slug']}"
 
-    # Replace these with your custom image URLs
-    GOG_LOGO_URL = "https://file.garden/afbSsuts32dZ5wSl/gog-galaxy-removebg-preview.png"
+    GOG_LOGO_URL = "https://files.catbox.moe/02rpk0.png"
     RONALDO_IMAGE_URL = "https://files.catbox.moe/qttqpy.png"
 
     end_timestamp = discord_timestamp(giveaway["endDate"])
 
     payload = {
-        "content": "@everyone",
+        # Replace ROLE_ID with your actual Discord role ID
+        "content": "<@&ROLE_ID>",
 
         "embeds": [
             {
                 "author": {
-                    "name": "Subho's GOG Freebie Informer",
+                    "name": giveaway["title"],
                     "icon_url": GOG_LOGO_URL
                 },
 
-                "title": f"🎁 {giveaway['title']}",
                 "url": game_url,
 
-                "description": (
-                    "A new game is available for **free on GOG!**"
-                ),
+                "description": "A new game is available for **free on GOG!**",
 
                 "fields": [
-                    {
-                        "name": "🎮 Game",
-                        "value": f"[{giveaway['title']}]({game_url})",
-                        "inline": True
-                    },
                     {
                         "name": "⏰ Ends",
                         "value": end_timestamp,
@@ -139,7 +131,7 @@ def send_discord(giveaway):
                     {
                         "name": "🎁 Claim",
                         "value": "[**Claim on GOG**](https://www.gog.com/giveaway/claim)",
-                        "inline": False
+                        "inline": True
                     }
                 ],
 
@@ -179,7 +171,6 @@ def send_discord(giveaway):
     except Exception as error:
         print(f"❌ Discord webhook failed: {error}")
         return False
-
 
 def main():
     print("[1] Checking GOG giveaway...")
