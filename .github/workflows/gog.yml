@@ -25,3 +25,13 @@ jobs:
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         run: python gog.py
+
+      - name: Save giveaway state
+        run: |
+          if [ -f gog_state.json ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add gog_state.json
+            git diff --cached --quiet || git commit -m "Update GOG giveaway state"
+            git push
+          fi
