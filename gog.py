@@ -112,40 +112,38 @@ def send_discord(giveaway):
         "content": "<@&1546890853262434314>",
 
         "embeds": [
+    {
+        "author": {
+            "name": "GOG - Giveaway",
+            "icon_url": GOG_LOGO_URL
+        },
+
+        "title": f"🎁 {giveaway['title']}",
+        "url": game_url,
+
+        "fields": [
             {
-                "author": {
-    "name": giveaway["title"],
-    "url": game_url,
-    "icon_url": GOG_LOGO_URL
-},
-
-                "url": game_url,
-
-        
-
-                "fields": [
-                    {
-                        "name": "⏰ Ends",
-                        "value": end_timestamp,
-                        "inline": True
-                    },
-                    {
-                        "name": "🎁 Claim",
-                        "value": "[**Claim on GOG**](https://www.gog.com/giveaway/claim)",
-                        "inline": True
-                    }
-                ],
-
-                "image": {
-                    "url": giveaway["cover"]
-                },
-
-                "footer": {
-                    "text": "Subho's GOG Freebie Informer",
-                    "icon_url": RONALDO_IMAGE_URL
-                }
+                "name": "⏰ Ends",
+                "value": end_timestamp,
+                "inline": True
+            },
+            {
+                "name": "🎁 Claim",
+                "value": "[**Claim on GOG**](https://www.gog.com/giveaway/claim)",
+                "inline": True
             }
-        ]
+        ],
+
+        "image": {
+            "url": giveaway["cover"]
+        },
+
+        "footer": {
+            "text": "Subho's GOG Freebie Informer",
+            "icon_url": RONALDO_IMAGE_URL
+        }
+    }
+]
     }
 
     data = json.dumps(payload).encode("utf-8")
