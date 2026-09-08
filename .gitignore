@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+gog_state.json
