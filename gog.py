@@ -114,9 +114,10 @@ def send_discord(giveaway):
         "embeds": [
             {
                 "author": {
-                    "name": giveaway["title"],
-                    "icon_url": GOG_LOGO_URL
-                },
+    "name": giveaway["title"],
+    "url": game_url,
+    "icon_url": GOG_LOGO_URL
+},
 
                 "url": game_url,
 
