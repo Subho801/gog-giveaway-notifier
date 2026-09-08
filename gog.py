@@ -174,7 +174,12 @@ def send_discord(giveaway):
 def main():
     print("[1] Checking GOG giveaway...")
 
-    giveaway = get_giveaway()
+    try:
+        giveaway = get_giveaway()
+    except Exception as error:
+        print(f"⚠️ GOG request failed: {error}")
+        print("ℹ️ Keeping existing giveaway state. No Discord notification.")
+        return
 
     if not giveaway:
         print("❌ No active GOG giveaway found.")
