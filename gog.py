@@ -103,7 +103,7 @@ def send_discord(giveaway):
     game_url = f"https://www.gog.com/game/{giveaway['slug']}"
 
     # Replace these with your custom image URLs
-    GOG_LOGO_URL = "https://files.catbox.moe/02rpk0.png"
+    GOG_LOGO_URL = "https://file.garden/afbSsuts32dZ5wSl/gog-galaxy-removebg-preview.png"
     RONALDO_IMAGE_URL = "https://files.catbox.moe/qttqpy.png"
 
     end_timestamp = discord_timestamp(giveaway["endDate"])
