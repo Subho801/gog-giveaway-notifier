@@ -118,7 +118,7 @@ def send_discord(giveaway):
             "icon_url": GOG_LOGO_URL
         },
 
-        "title": f"🎁 {giveaway['title']}",
+        "title": f"{giveaway['title']}",
         "url": game_url,
 
         "fields": [
