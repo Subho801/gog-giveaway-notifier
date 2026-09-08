@@ -1,4 +1,5 @@
 import json
+import os
 import urllib.parse
 import urllib.request
 
@@ -11,6 +12,7 @@ PARAMS = {
 }
 
 STATE_FILE = "gog_state.json"
+DISCORD_WEBHOOK = os.environ.get("DISCORD_WEBHOOK")
 
 
 def get_json(url):
@@ -77,26 +79,99 @@ def save_state(giveaway):
         json.dump(giveaway, file, indent=2)
 
 
+def send_discord(giveaway):
+    if not DISCORD_WEBHOOK:
+        print("❌ DISCORD_WEBHOOK is not configured.")
+        return False
+
+    game_url = f"https://www.gog.com/game/{giveaway['slug']}"
+
+    payload = {
+        "content": "@everyone",
+        "embeds": [
+            {
+                "title": f"🎁 {giveaway['title']}",
+                "url": game_url,
+                "description": "A new game is available for free on GOG!",
+                "thumbnail": {
+                    "url": giveaway["cover"]
+                },
+                "fields": [
+                    {
+                        "name": "🎮 Game",
+                        "value": f"[{giveaway['title']}]({game_url})",
+                        "inline": True
+                    },
+                    {
+                        "name": "⏰ Ends",
+                        "value": giveaway["endDate"] or "Unknown",
+                        "inline": True
+                    },
+                    {
+                        "name": "🎁 Claim",
+                        "value": "[Claim on GOG](https://www.gog.com/giveaway/claim)",
+                        "inline": False
+                    }
+                ],
+                "footer": {
+                    "text": "GOG Giveaway Notifier"
+                }
+            }
+        ]
+    }
+
+    data = json.dumps(payload).encode("utf-8")
+
+    request = urllib.request.Request(
+        DISCORD_WEBHOOK,
+        data=data,
+        headers={
+            "Content-Type": "application/json",
+            "User-Agent": "GOG-Giveaway-Notifier",
+        },
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=15) as response:
+            if 200 <= response.status < 300:
+                print("✅ Discord notification sent.")
+                return True
+
+            print(f"❌ Discord returned HTTP {response.status}")
+            return False
+
+    except Exception as error:
+        print(f"❌ Discord webhook failed: {error}")
+        return False
+
+
 def main():
+    print("[1] Checking GOG giveaway...")
+
     giveaway = get_giveaway()
 
     if not giveaway:
-        print("No active GOG giveaway.")
+        print("❌ No active GOG giveaway found.")
         return
+
+    print(f"✅ Current giveaway: {giveaway['title']}")
+    print(f"   ID: {giveaway['id']}")
+    print(f"   Ends: {giveaway['endDate']}")
 
     previous = load_state()
 
-    print(f"Current giveaway: {giveaway['title']}")
-    print(f"Product ID: {giveaway['id']}")
-    print(f"Ends: {giveaway['endDate']}")
-
     if previous and previous.get("id") == giveaway["id"]:
-        print("Same giveaway. Nothing to notify.")
+        print("ℹ️ Same giveaway. Nothing to notify.")
         return
 
-    print("New GOG giveaway detected!")
+    print("🚨 New GOG giveaway detected!")
 
-    save_state(giveaway)
+    if send_discord(giveaway):
+        save_state(giveaway)
+        print("✅ Giveaway state saved.")
+    else:
+        print("⚠️ Notification failed. State was NOT saved.")
 
 
 if __name__ == "__main__":
