@@ -109,7 +109,7 @@ def send_discord(giveaway):
 
     payload = {
         # Replace ROLE_ID with your actual Discord role ID
-        "content": "<@&ROLE_ID>",
+        "content": "<@&1546890853262434314>",
 
         "embeds": [
             {
@@ -120,7 +120,7 @@ def send_discord(giveaway):
 
                 "url": game_url,
 
-                "description": "A new game is available for **free on GOG!**",
+        
 
                 "fields": [
                     {
