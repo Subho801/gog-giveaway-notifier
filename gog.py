@@ -2,6 +2,7 @@ import json
 import os
 import urllib.parse
 import urllib.request
+from datetime import datetime
 
 BASE = "https://sections.gog.com/v1/pages/2f"
 
@@ -79,6 +80,21 @@ def save_state(giveaway):
         json.dump(giveaway, file, indent=2)
 
 
+
+def discord_timestamp(iso_date):
+    if not iso_date:
+        return "Unknown"
+
+    try:
+        dt = datetime.fromisoformat(iso_date)
+        timestamp = int(dt.timestamp())
+
+        return f"<t:{timestamp}:R>"
+
+    except Exception:
+        return iso_date
+
+
 def send_discord(giveaway):
     if not DISCORD_WEBHOOK:
         print("❌ DISCORD_WEBHOOK is not configured.")
@@ -86,16 +102,29 @@ def send_discord(giveaway):
 
     game_url = f"https://www.gog.com/game/{giveaway['slug']}"
 
+    # Replace these with your custom image URLs
+    GOG_LOGO_URL = "https://files.catbox.moe/02rpk0.png"
+    RONALDO_IMAGE_URL = "https://files.catbox.moe/qttqpy.png"
+
+    end_timestamp = discord_timestamp(giveaway["endDate"])
+
     payload = {
         "content": "@everyone",
+
         "embeds": [
             {
+                "author": {
+                    "name": "Subho's GOG Freebie Informer",
+                    "icon_url": GOG_LOGO_URL
+                },
+
                 "title": f"🎁 {giveaway['title']}",
                 "url": game_url,
-                "description": "A new game is available for free on GOG!",
-                "thumbnail": {
-                    "url": giveaway["cover"]
-                },
+
+                "description": (
+                    "A new game is available for **free on GOG!**"
+                ),
+
                 "fields": [
                     {
                         "name": "🎮 Game",
@@ -104,17 +133,23 @@ def send_discord(giveaway):
                     },
                     {
                         "name": "⏰ Ends",
-                        "value": giveaway["endDate"] or "Unknown",
+                        "value": end_timestamp,
                         "inline": True
                     },
                     {
                         "name": "🎁 Claim",
-                        "value": "[Claim on GOG](https://www.gog.com/giveaway/claim)",
+                        "value": "[**Claim on GOG**](https://www.gog.com/giveaway/claim)",
                         "inline": False
                     }
                 ],
+
+                "image": {
+                    "url": giveaway["cover"]
+                },
+
                 "footer": {
-                    "text": "GOG Giveaway Notifier"
+                    "text": "Subho's GOG Freebie Informer",
+                    "icon_url": RONALDO_IMAGE_URL
                 }
             }
         ]
